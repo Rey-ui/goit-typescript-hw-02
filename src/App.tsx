@@ -78,7 +78,7 @@ function App() {
     setHasError(false);
   };
   const fetchArticles = async (topic: string, page: number = 1) => {
-    const response: AxiosResponse<Image[]> = await axios.get(
+    const response: AxiosResponse<ApiResponse> = await axios.get(
       `https://api.unsplash.com/search/photos?client_id=nj4XtoHtERFLRDKvM__gsRKs3HRprXuq4l3RQxg_Pa4&page=${page}&query=${topic}`
     );
     return response.data;
