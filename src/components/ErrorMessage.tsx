@@ -1,5 +1,6 @@
+import React from "react";
 import css from "./ErrorMessage.module.css";
-const ErrorMessage = () => {
+const ErrorMessage: React.FC = () => {
   return <div className={css.errorMessage}>error try again</div>;
 };
 

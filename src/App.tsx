@@ -7,17 +7,28 @@ import ImageModal from "./components/ImageModal.jsx";
 import Loader from "./components/Loader.jsx";
 import React from "react";
 import ErrorMessage from "./components/ErrorMessage.jsx";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
+type Image = {
+  id: string;
+  urls: {
+    regular: string;
+    small: string;
+  };
+};
+type ApiResponse = {
+  results: Image[];
+  total_pages: number;
+};
 function App() {
-  const [images, setPhotos] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [hasError, setHasError] = useState(false);
-  const [loadMore, setLoadMore] = useState(1);
-  const [topic, setTopic] = useState("");
-  const [modalIsOpen, setIsOpen] = React.useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [showBtn, setShowBtn] = useState(false);
-  function openModal(imageUrl) {
+  const [images, setPhotos] = useState<Image[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [hasError, setHasError] = useState<boolean>(false);
+  const [loadMore, setLoadMore] = useState<number>(1);
+  const [topic, setTopic] = useState<string>("");
+  const [modalIsOpen, setIsOpen] = React.useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showBtn, setShowBtn] = useState<boolean>(false);
+  function openModal(imageUrl: string): void {
     setSelectedImage(imageUrl);
     setIsOpen(true);
   }
@@ -27,7 +38,7 @@ function App() {
     //subtitle.style.color = "#f00";
   }
 
-  function closeModal() {
+  function closeModal(): void {
     setSelectedImage(null);
     setIsOpen(false);
   }
@@ -35,10 +46,13 @@ function App() {
     if (!topic) {
       return;
     }
-    const fetchData = async () => {
+    const fetchData = async (): Promise<void> => {
       try {
         setLoading(true);
-        const { results, total_pages } = await fetchArticles(topic, loadMore);
+        const { results, total_pages }: ApiResponse = await fetchArticles(
+          topic,
+          loadMore
+        );
         if (results.length == 0) {
           toast.error("This didn't work.");
           return;
@@ -57,19 +71,19 @@ function App() {
     fetchData();
   }, [topic, loadMore]);
 
-  const handleSubmit = (searchValue) => {
+  const handleSubmit = (searchValue: string): void => {
     setTopic(searchValue);
     setPhotos([]);
     setLoadMore(1);
     setHasError(false);
   };
-  const fetchArticles = async (topic, page = 1) => {
-    const response = await axios.get(
+  const fetchArticles = async (topic: string, page: number = 1) => {
+    const response: AxiosResponse<Image[]> = await axios.get(
       `https://api.unsplash.com/search/photos?client_id=nj4XtoHtERFLRDKvM__gsRKs3HRprXuq4l3RQxg_Pa4&page=${page}&query=${topic}`
     );
     return response.data;
   };
-  const handleLoadMore = () => {
+  const handleLoadMore = (): void => {
     setLoadMore((prevPage) => prevPage + 1);
   };
   return (
